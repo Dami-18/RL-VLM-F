@@ -954,21 +954,21 @@ class Trainer(object):
 
             while self.step < self.train_num_steps:
                 
-                # #Testing evaluation
-                # if "metaworld" in self.config.env:
-                #             eval_scores, success, mean_obj_to_target = self.eval_actor(
-                #                 device=self.device,
-                #                 n_episodes=self.config.n_episodes,
-                #                 env_name=self.config.env,
-                #                 step=self.step
-                #             )
-                # else:
-                #     eval_scores, success = self.eval_actor(
-                #         device=self.device,
-                #         n_episodes=self.config.n_episodes,
-                #         env_name=self.config.env,
-                #         step=self.step
-                #     )
+                #Testing evaluation
+                if "metaworld" in self.config.env:
+                            eval_scores, success, mean_obj_to_target = self.eval_actor(
+                                device=self.device,
+                                n_episodes=self.config.n_episodes,
+                                env_name=self.config.env,
+                                step=self.step
+                            )
+                else:
+                    eval_scores, success = self.eval_actor(
+                        device=self.device,
+                        n_episodes=self.config.n_episodes,
+                        env_name=self.config.env,
+                        step=self.step
+                    )
 
                 total_loss = 0.
 
@@ -1161,32 +1161,11 @@ class Trainer(object):
                 else:
                     action = self.act([images[-1], images[-1]], [states[-1], states[-1]])  # First time step condition on the initial state twice
                 action = action[0]
-                # try:
-                # First, just get the raw result without unpacking
-                step_result = self.env.step(action)
-                
-                # Check how many values we got
-                if len(step_result) == 5:
-                    # New Gym API (5 values)
-                    state, reward, terminated, truncated, extra = step_result
+                try:
+                    state, reward, done, extra = self.env.step(action)
+                except:
+                    state, reward, terminated, truncated, extra = self.env.step(action)
                     done = terminated or truncated
-                elif len(step_result) == 4:
-                    # Old Gym API (4 values)
-                    state, reward, done, extra = step_result
-                else:
-                    # Unexpected number of return values, use a more generic approach
-                    print(f"Warning: Unexpected number of return values from env.step(): {len(step_result)}")
-                    state = step_result[0]  # First element is usually the observation
-                    reward = step_result[1] if len(step_result) > 1 else 0
-                    done = step_result[2] if len(step_result) > 2 else False
-                    extra = step_result[3] if len(step_result) > 3 else {}
-                # except Exception as e:
-                #     print(f"Error in env.step: {e}")
-                #     # Create fallback values if step fails completely
-                #     state = states[-1] if len(states) > 0 else None  # Use the last known state instead of undefined 'obs'
-                #     reward = 0
-                #     done = True
-                #     extra = {}
 
                 episode_reward += reward
                 images.append(render(self.env, env_name))
@@ -1220,32 +1199,19 @@ class Trainer(object):
     def act(self, images, obs):
         device = self.device
         bs = 1
-        
-        # Extract the actual observation arrays from the tuples
-        obs_arrays = []
-        for o in obs:
-            # If the observation is a tuple, extract the array part
-            if isinstance(o, tuple) and len(o) > 0:
-                obs_arrays.append(o[0])  # Get the array part
-            else:
-                obs_arrays.append(o)  # Use as is
-        
-        # Convert image data to tensor
+        # print(images[0].shape)
         x_conds = torch.Tensor(np.array([images[0], images[1]])).permute(0, 3, 1, 2).unsqueeze(0).to(device)
-        
-        # Normalize observations
-        normalized_obs = []
-        for o in obs_arrays:
-            normalized_o = (o - self.obs_mean) / self.obs_std
-            normalized_obs.append(normalized_o)
-        
-        # Convert to tensor
-        obs_tensor = torch.Tensor(np.array(normalized_obs)).unsqueeze(0).to(device)
-        
+        # print(x_conds.shape)
+        for o in obs:
+            o = (o - self.obs_mean) / self.obs_std
+        obs = torch.Tensor(np.array([obs[0], obs[1]])).unsqueeze(0).to(device)
+        # print(obs.shape)
+        # tasks = self.encode_batch_text(tasks).to(device)
+
         with self.accelerator.autocast():
-            output = self.model.sample(x_conds, obs_tensor, batch_size=bs)
-        
+            # output = self.ema.ema_model.sample(batch_size=bs, x_cond=x_conds, obs=obs)
+            output = self.model.sample(x_conds, obs, batch_size=bs)
         output = output.cpu().numpy().squeeze(0)
         output = output * self.actions_std + self.actions_mean
-        
+        # print("output : ", output.shape)
         return output

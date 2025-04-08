@@ -105,9 +105,10 @@ class MWDataset(Dataset):
         try:
             # Debugging output to track the index
             
-            img1 = np.load(self.images_path[idx][0])
-            img2 = np.load(self.images_path[idx][1])
-
+            img1 = Image.open(self.images_path[idx][0])
+            img2 = Image.open(self.images_path[idx][1])
+            img1 = np.array(img1)
+            img2 = np.array(img2)
             # Check if the image shapes are consistent
             if img1.shape != img2.shape:
                 raise RuntimeError(f"Inconsistent image shapes at index {idx}: {img1.shape}, {img2.shape}")

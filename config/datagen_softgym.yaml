@@ -50,7 +50,7 @@ save_video: false
 seed: 0
 
 # Environment
-env: softgym_PassWater
+env: metaworld_drawer-open-v2
 gradient_update: 1
 
 # vlm label

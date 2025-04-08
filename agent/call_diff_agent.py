@@ -1,7 +1,7 @@
 import sys
 import os
 
-sys.path.append("/home/sreyas/Desktop/RL-VLM-F/agent")
+sys.path.append("/home/theya/RL/RL-VLM-F/agent")
 from flowdiffusion.flowdiffusion.goal_diffusion_policy import GoalGaussianDiffusion as GoalGaussianDiffusionPolicy, Trainer as TrainerPolicy
 from flowdiffusion.flowdiffusion.diffusion_policy_baseline.unet import Unet1D
 from flowdiffusion.flowdiffusion.diffusion_policy_baseline.dataset import MWDataset
@@ -33,8 +33,8 @@ class TrainConfig:
     eval_freq: int = int(2000)  # How often (time steps) we evaluate -default 5000
     n_episodes: int = 5  # How many episodes run during evaluation
     max_timesteps: int = int(30000)  # Max time steps to run environment - defualt int (1e6)
-    dataset_dir: str = "/mnt/sda1/sreyas/RL_VLM_F-exp/datagen/Cartpole/datagen_Cartpole-Expert"  # Where to load dataset
-    results_folder: str = "/home/sreyas/Desktop/RL-VLM-F/diffusion/cartpole/"  # Where to save results
+    dataset_dir: str = "/home/theya/RL_VLM_F-exp/datagen/Cartpole/datagen_Cartpole-Expert"  # Where to load dataset
+    results_folder: str = "/home/theya/RL-VLM-F/diffusion/drawer_results/"  # Where to save results
     milestone: Optional[int] = None   # Model load file name, "" doesn't load
     render: bool = True #render and save outputs in eval
     horizon_length: int = 8
@@ -57,7 +57,7 @@ def set_seed(
     torch.manual_seed(seed)
     torch.use_deterministic_algorithms(deterministic_torch)
     
-def get_diffusion_policy(ckpt_dir='/home/venky/Desktop/RL-VLM-F/agent/results/ckpts/diffusion_policy', milestone=None, sampling_timesteps=10, dataset = None, obs_dim=39, action_dim=4, env = None, horizon_length=4, config=None):
+def get_diffusion_policy(ckpt_dir='/home/theya/RL-VLM-F/agent/results/ckpts/diffusion_policy', milestone=None, sampling_timesteps=10, dataset = None, obs_dim=39, action_dim=4, env = None, horizon_length=4, config=None):
     print("Action dim: ", action_dim)
     print("Obs dim: ", obs_dim)
     unet = Unet1D(action_space=action_dim, obs_steps=2, obs_dim=obs_dim)
@@ -240,4 +240,3 @@ def eval_diff_policy(config: TrainConfig):
 if __name__ == "__main__":
     run_diff_policy()
     # eval_diff_policy()
-   

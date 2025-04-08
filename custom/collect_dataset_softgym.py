@@ -1,6 +1,6 @@
 #!/usr/bin/env python3\
 import sys
-sys.path.append('/home/sreyas/Desktop/RL-VLM-F')
+sys.path.append('/home/theya/RL/RL-VLM-F')
 import numpy as np
 import torch
 import os
@@ -23,7 +23,7 @@ import cv2
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from math import ceil
 from tqdm import tqdm
-import pyrallis
+# import pyrallis
 from dataclasses import dataclass,asdict
 import os
 import pickle
@@ -34,7 +34,7 @@ import uuid
 
 class DataGen(object):
     def __init__(self, cfg):
-        self.work_dir = os.getcwd()
+        self.work_dir = os.getcwd() #current working directory
         print(f'workspace: {self.work_dir}')
 
         self.cfg = cfg
@@ -92,13 +92,13 @@ class DataGen(object):
         self.image_height = image_height
         self.image_width = image_width
 
-        self.replay_buffer = ReplayBuffer(
-            self.env.observation_space.shape,
-            self.env.action_space.shape,
-            int(cfg.replay_buffer_capacity) if not self.cfg.image_reward else 200000, # we cannot afford to store too many images in the replay buffer.
-            self.device,
-            store_image=self.cfg.image_reward,
-            image_size=image_height)
+        # self.replay_buffer = ReplayBuffer(
+        #     self.env.observation_space.shape,
+        #     self.env.action_space.shape,
+        #     int(cfg.replay_buffer_capacity) if not self.cfg.image_reward else 200000, # we cannot afford to store too many images in the replay buffer.
+        #     self.device,
+        #     store_image=self.cfg.image_reward,
+        #     image_size=image_height)
         
         # for logging
         self.total_feedback = 0
@@ -397,7 +397,7 @@ class DataGen(object):
         # print("Episode length: ", len(images))
         return state, images, actions, next_state, next_images, rewards, episode_reward, terminals, info
     
-@hydra.main(config_path='/home/sreyas/Desktop/RL-VLM-F/config/datagen_softgym.yaml', strict=True)
+@hydra.main(config_path='/home/theya/RL/RL-VLM-F/config/datagen_softgym.yaml', strict=True)
 def main(cfg):
     print("Loading agent step: ", cfg.agent_load_step)
     print("Loading reward model step: ", cfg.reward_model_load_step)

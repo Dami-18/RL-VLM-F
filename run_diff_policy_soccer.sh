@@ -15,3 +15,5 @@ python agent/call_diff_agent.py --seed 42 --project "ICRA2024-Soccer-medium" --d
 python agent/call_diff_agent.py --seed 43 --project "ICRA2024-Soccer-medium" --dataset_dir "/mnt/sda1/sreyas/RL_VLM_F-exp/datagen/soccer/soccer-medium-12000" --env "metaworld_soccer-v2" --results_folder "/home/sreyas/Desktop/RL-VLM-F/diffusion/soccer/"
 
 python agent/call_diff_agent.py --seed 44 --project "ICRA2024-Soccer-medium" --dataset_dir "/mnt/sda1/sreyas/RL_VLM_F-exp/datagen/soccer/soccer-medium-12000" --env "metaworld_soccer-v2" --results_folder "/home/sreyas/Desktop/RL-VLM-F/diffusion/soccer/"
+
+python agent/call_diff_agent.py --seed 42 --project "test-button-push" --dataset_dir "/home/theya/RL/RL-VLM-F/test_dummy/button-press-topdown/expert" --env "metaworld_button-press-topdown-v2" --results_folder "/home/theya/RL/RL-VLM-F/diffusion-results/button-press-topdown-v2"

@@ -1,0 +1,2 @@
+Requirement already satisfied: opencv-python in /home/theya/miniconda3/envs/iql_env/lib/python3.8/site-packages (4.11.0.86)
+Requirement already satisfied: numpy>=1.17.0 in /home/theya/miniconda3/envs/iql_env/lib/python3.8/site-packages (from opencv-python) (1.24.3)
